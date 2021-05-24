@@ -1,0 +1,27 @@
+{
+  "name": "rocketmq",
+  "version": "1.0.0",
+  "description": "rocketMQ源码学习",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/810536464/study-for-rocketMQ.git"
+  },
+  "keywords": [
+    "Qadnfxwyydz1228"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/810536464/study-for-rocketMQ/issues"
+  },
+  "homepage": "https://github.com/810536464/study-for-rocketMQ#readme"
+}
