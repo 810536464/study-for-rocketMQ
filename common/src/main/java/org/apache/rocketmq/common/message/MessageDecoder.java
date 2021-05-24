@@ -44,20 +44,21 @@ public class MessageDecoder {
     public static final int PHY_POS_POSITION = 4 + 4 + 4 + 4 + 4 + 8;
     public static final int QUEUE_OFFSET_POSITION = 4 + 4 + 4 + 4 + 4;
     public static final int SYSFLAG_POSITION = 4 + 4 + 4 + 4 + 4 + 8 + 8;
-//    public static final int BODY_SIZE_POSITION = 4 // 1 TOTALSIZE
-//        + 4 // 2 MAGICCODE
-//        + 4 // 3 BODYCRC
-//        + 4 // 4 QUEUEID
-//        + 4 // 5 FLAG
-//        + 8 // 6 QUEUEOFFSET
-//        + 8 // 7 PHYSICALOFFSET
-//        + 4 // 8 SYSFLAG
-//        + 8 // 9 BORNTIMESTAMP
-//        + 8 // 10 BORNHOST
-//        + 8 // 11 STORETIMESTAMP
-//        + 8 // 12 STOREHOSTADDRESS
-//        + 4 // 13 RECONSUMETIMES
-//        + 8; // 14 Prepared Transaction Offset
+//    public static final int BODY_SIZE_POSITION =
+//        4 // 1 TOTALSIZE：该消息条目总长度，4字节
+//        + 4 // 2 MAGICCODE：魔术，4字节，固定值0✖️daa320a7
+//        + 4 // 3 BODYCRC：消息体crc校验码，4字节
+//        + 4 // 4 QUEUEID：消息消费ID，4字节
+//        + 4 // 5 FLAG：消息flag，RocketMQ不做处理，供应用程序使用，默认4字节
+//        + 8 // 6 QUEUEOFFSET：消息在消息消费队列的偏移量，8字节
+//        + 8 // 7 PHYSICALOFFSET：消息在CommitLog文件中的偏移量，8字节
+//        + 4 // 8 SYSFLAG：消息系统FLAG，例如是否压缩，是否是事务消息等，4字节
+//        + 8 // 9 BORNTIMESTAMP：消息生产者调用消息发送API的时间戳，8字节
+//        + 8 // 10 BORNHOST：消息发送者IP，端口号，8字节
+//        + 8 // 11 STORETIMESTAMP：消息存储时间戳，8字节
+//        + 8 // 12 STOREHOSTADDRESSL：Broker服务器IP+端口号，8字节
+//        + 4 // 13 RECONSUMETIMES：消息重试次数，4字节
+//        + 8; // 14 Prepared Transaction Offset：事务消息物理偏移量，8字节
 
     public static String createMessageId(final ByteBuffer input, final ByteBuffer addr, final long offset) {
         input.flip();
