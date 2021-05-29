@@ -122,15 +122,21 @@ public class MappedFileQueue {
 
     public void truncateDirtyFiles(long offset) {
         List<MappedFile> willRemoveFiles = new ArrayList<MappedFile>();
-
+        // 遍历目录下的文件
         for (MappedFile file : this.mappedFiles) {
+            //fileTailOffset：文件的尾部偏移量 == 文件的起始偏移量 + 单个文件的存储大小
             long fileTailOffset = file.getFileFromOffset() + this.mappedFileSize;
+            // 判断尾部偏移量是否大于offset，小于则跳过该文件
             if (fileTailOffset > offset) {
+                // 说明当前文件包含在有效偏移里，设置MappedFile的flushedPosition和committedPosition
                 if (offset >= file.getFileFromOffset()) {
                     file.setWrotePosition((int) (offset % this.mappedFileSize));
                     file.setCommittedPosition((int) (offset % this.mappedFileSize));
                     file.setFlushedPosition((int) (offset % this.mappedFileSize));
                 } else {
+                    // 说明该文件是有效文件后面创建的，调用MappedFile#destroy释放MappedFile
+                    // 占用的内存资源（内存映射与内存通道等），然后加入到待删除文件列表中，最终调
+                    // 用deleteExpiredFile将文件从屋里磁盘删除
                     file.destroy(1000);
                     willRemoveFiles.add(file);
                 }
@@ -164,19 +170,25 @@ public class MappedFileQueue {
     }
 
     public boolean load() {
+        //加载CommitLog文件，加载${ROCKET_HOME}/store/commitlog目录下所有的文件
         File dir = new File(this.storePath);
         File[] files = dir.listFiles();
         if (files != null) {
             // ascending order
+            //按照文件名排序
             Arrays.sort(files);
             for (File file : files) {
 
+                //如果文件大小与配置文件的大哥文件大小不一致，将忽略该目录下所有文件
                 if (file.length() != this.mappedFileSize) {
                     log.warn(file + "\t" + file.length()
                         + " length not matched message store config value, please check it manually");
                     return false;
                 }
 
+                /**
+                 * 创建MappedFile对象，将wrotePosition，flushedPosition，committedPosition三个指针都设置为文件大小
+                 */
                 try {
                     MappedFile mappedFile = new MappedFile(file.getPath(), mappedFileSize);
 
@@ -481,7 +493,7 @@ public class MappedFileQueue {
 
     /**
      * Finds a mapped file by offset.
-     *
+     * 根据消息偏移量寻找文件
      * @param offset Offset.
      * @param returnFirstOnNotFound If the mapped file is not found, then return the first one.
      * @return Mapped file or null (when not found and returnFirstOnNotFound is <code>false</code>).
